@@ -1,0 +1,3 @@
+F:/RTOSMX/FREERTOS_MX/cmake-build-debug/CMakeFiles/FREERTOS_MX.elf.dir
+F:/RTOSMX/FREERTOS_MX/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/RTOSMX/FREERTOS_MX/cmake-build-debug/CMakeFiles/rebuild_cache.dir
