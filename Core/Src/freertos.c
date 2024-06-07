@@ -49,7 +49,11 @@
 /* USER CODE BEGIN Variables */
 static TaskHandle_t print_task_handle = NULL;
 static TaskHandle_t print_task2_handle = NULL;
+static TaskHandle_t taskCreate_handle = NULL;
+
 int times = 5;
+
+static void task_create(void);
 
 static void task_print(void *parameters);
 
@@ -72,6 +76,19 @@ static void task_print2(void *parameters) {
         printf("this is task2, for %d times\r\n", i + 1);
     }
     while (1) { osDelay(1000); }
+}
+
+static void task_create(void) {
+    BaseType_t xReturn = pdPASS;
+    taskENTER_CRITICAL();
+    xReturn = xTaskCreate((TaskFunction_t) task_print, (const char *) "P1task", 256, NULL, 3, print_task_handle);
+    if (pdPASS == xReturn)
+        printf("success11!\r\n");
+    xReturn = xTaskCreate((TaskFunction_t) task_print2, (const char *) "p2task", 256, &times, 4, print_task2_handle);
+    if (pdPASS == xReturn)
+        printf("success22!\r\n");
+    vTaskDelete(taskCreate_handle);
+    taskEXIT_CRITICAL();
 }
 
 /* USER CODE END FunctionPrototypes */
@@ -125,10 +142,17 @@ void MX_FREERTOS_Init(void) {
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+//    osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+//    defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
     /* USER CODE BEGIN RTOS_THREADS */
+    BaseType_t xReturn = pdPASS;
+    xReturn = xTaskCreate((TaskFunction_t) task_create, "APP_createTask", 128, NULL, 0, &taskCreate_handle);
+    if (pdPASS == xReturn) {
+        osKernelStart();
+        printf("apptask created!\r\n");
+    } else
+        while (1);
     /* add threads, ... */
     /* USER CODE END RTOS_THREADS */
 
