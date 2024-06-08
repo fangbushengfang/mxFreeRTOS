@@ -47,9 +47,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-static TaskHandle_t print_task_handle = NULL;
-static TaskHandle_t print_task2_handle = NULL;
-static TaskHandle_t taskCreate_handle = NULL;
+static TaskHandle_t print_task_handle ;
+static TaskHandle_t print_task2_handle ;
+static TaskHandle_t taskCreate_handle ;
 
 int times = 5;
 
@@ -81,12 +81,14 @@ static void task_print2(void *parameters) {
 static void task_create(void) {
     BaseType_t xReturn = pdPASS;
     taskENTER_CRITICAL();
-    xReturn = xTaskCreate((TaskFunction_t) task_print, (const char *) "P1task", 256, NULL, 3, print_task_handle);
+    xReturn = xTaskCreate((TaskFunction_t) task_print, (const char *) "P1task", 128, NULL, 1, print_task_handle);
     if (pdPASS == xReturn)
         printf("success11!\r\n");
-    xReturn = xTaskCreate((TaskFunction_t) task_print2, (const char *) "p2task", 256, &times, 4, print_task2_handle);
+    xReturn = xTaskCreate((TaskFunction_t) task_print2, (const char *) "p2task", 256, &times, 2, print_task2_handle);
     if (pdPASS == xReturn)
         printf("success22!\r\n");
+    else
+        printf("task2 failure\r\n");
     vTaskDelete(taskCreate_handle);
     taskEXIT_CRITICAL();
 }
@@ -149,8 +151,8 @@ void MX_FREERTOS_Init(void) {
     BaseType_t xReturn = pdPASS;
     xReturn = xTaskCreate((TaskFunction_t) task_create, "APP_createTask", 128, NULL, 0, &taskCreate_handle);
     if (pdPASS == xReturn) {
-        osKernelStart();
         printf("apptask created!\r\n");
+        osKernelStart();
     } else
         while (1);
     /* add threads, ... */
